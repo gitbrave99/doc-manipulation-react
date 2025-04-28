@@ -1,28 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button } from "@/components/ui/button"
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useState } from "react";
 import { read, utils } from 'xlsx';
-import Spreadsheet from "react-spreadsheet";
 import { Input } from "@/components/ui/input";
+import { AGencia, MatrixDoc } from "../interfaces/MatrixDoc.interfaces";
+import { log } from "node:console";
  
-
-type Matrix<T> = Array<Array<T | undefined>>;
-
 // interface President {
 //   Name: string;
 //   Index: number;
 // }
-interface AGencia { value: string | number | null | undefined }
+ 
 
 interface ImportExcelComponentProps<T>{
   // document:File|null,
-  setDocument:React.Dispatch<SetStateAction<Matrix<AGencia>>>
+  setDocument:React.Dispatch<SetStateAction<MatrixDoc<AGencia>>>
 }
 
 export const ImportExcelComponent = <T,>({setDocument}:ImportExcelComponentProps<T>) => {
   // const [pres, setPres] = useState<Presidnt[]>([]);
   const [inputKey, setInputKey] = useState(Date.now());
-  const [agencias, setAgencias] = useState<Matrix<AGencia>>([]);
+  const [agencias, setAgencias] = useState<MatrixDoc<AGencia>>([]);
 
   const resetInput = () => {
     setInputKey(Date.now()); // cambia la key => React recrea el input
@@ -44,7 +41,6 @@ export const ImportExcelComponent = <T,>({setDocument}:ImportExcelComponentProps
       const result = e.target?.result;
       if (result == null ) {return;}
       const data = new Uint8Array(result as ArrayBuffer);
-      console.info("data: ", data)
       const workbook = read(data, { type: 'array' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = utils.sheet_to_json(worksheet, { header: 1 });
@@ -65,7 +61,7 @@ export const ImportExcelComponent = <T,>({setDocument}:ImportExcelComponentProps
       console.log("no es un array json");
       return;
     }
-    const padre:Matrix<AGencia> = [];
+    const padre:MatrixDoc<AGencia> = [];
     let fila:AGencia[] = [];
 
     jsonData.forEach(row => {
@@ -76,6 +72,8 @@ export const ImportExcelComponent = <T,>({setDocument}:ImportExcelComponentProps
       fila = [];
     });
     setAgencias(padre);
+    console.log("matrix doc  ", padre);
+    
     setDocument(padre)
   }
 

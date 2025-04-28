@@ -1,27 +1,27 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { useContext } from "react";
 import { ImportExcelComponent } from "../components/ImportExcelComponent"
-import { Input } from "@/components/ui/input"
 import ShowDocComponent from "../components/ShowDocComponent"
-import { useState } from "react";
+import { ReadingContext } from "../context/ReadingContext";
 
-
-type Matrix<T> = Array<Array<T | undefined>>;
-interface AGencia { value: string | number | null | undefined }
 
 const ReadingPage = () => {
-    const [agencias, setAgencias] = useState<Matrix<AGencia>>([]);
-    console.log("agencias: ", agencias);
-    
+    const { dataMatrix, setDataMatrix } = useContext(ReadingContext);
+
+    // const [agencias, setAgencias] = useState<Matrix<AGencia>>([]);
+    console.log("agencias: ", dataMatrix);
+
     return (
-        <div className="m-8">
-            
-            <div className="border-2 p-3">
-                <ImportExcelComponent setDocument={setAgencias}/>
+        
+            <div className="m-8">
+                <div className="border-2 p-3">
+                    <ImportExcelComponent setDocument={setDataMatrix} />
+                </div>
+                <div className="w-max">
+                    <ShowDocComponent pInitValue={dataMatrix} />
+                </div>
             </div>
-            <div className="w-max">
-                <ShowDocComponent pInitValue={agencias}/>
-            </div>
-        </div>
+        
     )
 }
 
